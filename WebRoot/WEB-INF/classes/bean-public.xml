@@ -1,0 +1,86 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+    	 http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+     	 http://www.springframework.org/schema/context
+         http://www.springframework.org/schema/context/spring-context.xsd
+         http://www.springframework.org/schema/aop
+         http://www.springframework.org/schema/aop/spring-aop.xsd
+         http://www.springframework.org/schema/tx
+     	 http://www.springframework.org/schema/tx/spring-tx.xsd">
+     	             
+                         
+             <!-- 1. 数据源配置 -->
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<property name="driverClass" value="com.mysql.jdbc.Driver"></property>
+		<property name="jdbcUrl" value="jdbc:mysql:///faceweb"></property>
+		<property name="user" value="root"></property>
+		<property name="password" value="root"></property>
+		<property name="initialPoolSize" value="3"></property>
+		<property name="maxPoolSize" value="6"></property>
+	</bean>
+
+      <!-- 2.Spring 创建SessionFactory对象 -->
+   <!-- 方式3：所有的配置都在spring中完成 -->
+       <bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">   
+                <!-- a.注入连接池 -->
+          <property name="dataSource" ref="dataSource" ></property>         
+               <!-- b.hibernate常用配置：方言、自动建表、显示sql -->
+          <property name="hibernateProperties" > 
+               <props>
+                  <prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+                  <prop key="hibernate.show_sql">true</prop>
+                  <prop key="hibernate.hbm2ddl.auto">update</prop>
+               </props>         
+          </property>
+               <!--  c.加载所有的映射 -->
+             <property name="mappingLocations">
+                 <list>
+                     <value>classpath:ax/supg/biz/pojo/*.hbm.xml</value>
+                 </list>            
+             </property>           
+        </bean>
+         <!-- 3 spring声明式事务管理配置 -->
+             <!--  a.事务管理器 -->
+            <bean id="txManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+              <property name="sessionFactory" ref="sessionFactory"></property>
+           </bean>              
+             <!-- b.事务通知 -->
+             <tx:advice id="txAdvice" transaction-manager="txManager">
+                 <tx:attributes>
+                   <tx:method name="get*" read-only="true" propagation="SUPPORTS"/>       
+                   <tx:method name="find*" read-only="true" propagation="SUPPORTS"/>     
+                   <tx:method name="save*"    propagation="REQUIRED"/>  
+                   <tx:method name="update*"  propagation="REQUIRED"/>  
+                   <tx:method name="delete*"  propagation="REQUIRED"/> 
+                    <tx:method name="add*"  propagation="REQUIRED"/> 
+                   <tx:method name="*"  read-only="false"/>                
+                 </tx:attributes>              
+             </tx:advice>            
+             <!--  c.Aop配置 = 切入点表达式+应用通知规则 -->
+             <aop:config>
+               <aop:advisor advice-ref="txAdvice" pointcut="execution(* ax.supg.biz.front.service.impl.*.*(..))"/>
+             </aop:config>
+             
+         <!-- 公用配置
+      abstract="true" 表示是一个抽象的bean，不会被实例化;可以被其它bean继承，就可以省略父bean定义多的属性     -->
+      <bean id="baseDao" abstract="true">   
+           <property name="sessionFactory" ref="sessionFactory"></property>
+      </bean>
+             
+</beans>     
+
+
+
+
+
+
+
+
+
+

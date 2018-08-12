@@ -1,0 +1,6 @@
+eclipse.preferences.version=1
+encoding//src/ax/supg/biz/front/dao/IBaseDao.java=UTF-8
+encoding//src/ax/supg/biz/front/dao/impl/BaseDao.java=UTF-8
+encoding//src/ax/supg/biz/front/service/IBaseService.java=UTF-8
+encoding//src/ax/supg/biz/front/web/UploadImage.java=UTF-8
+encoding//src/ax/supg/utils/UploadImage.java=UTF-8

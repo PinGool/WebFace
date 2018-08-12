@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+
+      <!-- 常量配置 -->
+	<!-- 1. struts标签使用简单样式主题 -->
+	<constant name="struts.ui.theme" value="simple"></constant>
+
+	<package name="FaceUser" extends="struts-default">
+	 
+	 
+	  <!-- 拦截器配置 -->
+		<interceptors>
+			<!-- 自定义拦截器 -->
+			<interceptor name="authInterceptor" class="ax.supg.biz.front.interceptor.AuthInterceptor"></interceptor>
+			<!-- 拦截器栈 -->
+			<interceptor-stack name="myStack">
+				<interceptor-ref name="defaultStack"></interceptor-ref>
+				<interceptor-ref name="authInterceptor"></interceptor-ref>
+			</interceptor-stack>
+		</interceptors>
+		<!-- 当前包下所有的action类都应用拦截器 -->
+		<default-interceptor-ref name="myStack"></default-interceptor-ref>		
+			 
+	  <!-- 全局视图 -->
+		 <global-results>
+			<result name="input">/login.jsp</result>
+		 </global-results>
+	 
+	 
+
+ <!-- 首页视图显示（框架集页面） -->
+		 <action name="main_*" class="ax.supg.biz.front.web.MainAction" method="{1}">
+		 	<!-- 默认访问的主页 -->	
+		 	<result>/WEB-INF/views/main.jsp</result>
+		 	<!-- 头部/左侧菜单/右侧正文 -->
+		 	<result name="{1}">/WEB-INF/views/{1}.jsp</result>
+		 </action>
+
+      <!--   用户模块 -->
+         <action name="FaceUser_*" class="ax.supg.biz.front.web.FaceUserAction" method="{1}">
+             <result name="add">/WEB-INF/views/User/reg.jsp</result>                 
+         <result name="save" type="redirectAction">FaceUser_findAll.action</result> 
+         <result name="imgList">/index.jsp</result> 
+         <result name="show">/showIndex.jsp</result>       
+         </action>
+
+   <!--   用户注册模块 -->
+         <action name="FaceTop_*" class="ax.supg.biz.front.web.FaceUserAction" method="{1}">
+                  <!-- 指定执行哪个拦截器，这样myStack就不会被执行 -->
+        	<interceptor-ref name="defaultStack"></interceptor-ref>
+             <result name="add">/WEB-INF/views/User/reg.jsp</result>                 
+         </action>
+        
+
+       <!--  用户登录模块 -->
+    <action name="login_*" class="ax.supg.biz.front.web.LoginAction" method="{1}">
+               <!-- 指定执行哪个拦截器，这样myStack就不会被执行 -->
+    	<interceptor-ref name="defaultStack"></interceptor-ref>
+           <!--    登陆成功  -->
+         <result name="success">/WEB-INF/views/User/upFace.jsp</result>
+    </action>
+   
+       <action name="img_*" class="ax.supg.biz.front.web.ImgAction" method="{1}">
+			<result name="add" type="redirectAction">img_findAll.action</result>
+			<result name="imgList">/index.jsp</result>
+		</action>
+
+   
+
+	</package>
+
+</struts>

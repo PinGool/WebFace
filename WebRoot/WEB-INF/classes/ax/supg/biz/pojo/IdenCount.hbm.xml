@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+	"-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+	"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<!-- 部门映射 -->
+<hibernate-mapping package="ax.supg.biz.pojo">
+
+	<class name="IdenCount" table="t_IdenCount">
+		<id name="id" type="java.lang.Long">
+			<generator class="native"></generator>
+		</id>
+		<property name="uid" length="30"></property>
+			
+		<property name="user_info" length="200"></property>
+		<property name="scores" type="java.lang.Double" length="10"></property>
+		
+		<property name="loginTime" length="30"></property>
+		<property name="awse" length="6"></property>
+		
+		<!-- 关联映射 (t_employee表的外键字段，dept_id) -->
+		
+	</class>
+
+</hibernate-mapping>
+
+
+
